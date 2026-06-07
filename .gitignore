@@ -1,0 +1,17 @@
+.venv/
+.idea/
+
+# Ignora a pasta oculta de dependências dentro do diretório terraform
+terraform/.terraform/
+
+# Ignora o arquivo de trava de provedores
+terraform/.terraform.lock.hcl
+
+# Ignora os arquivos de estado (que guardam senhas)
+terraform/*.tfstate
+terraform/*.tfstate.*
+
+# Ignora arquivos de variáveis sensíveis
+terraform/*.tfvars
+terraform/*.tfvars.json
+
