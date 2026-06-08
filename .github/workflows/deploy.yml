@@ -54,4 +54,4 @@ jobs:
         run: |
           # Sincroniza apenas a pasta dos scripts com o diretório correto do Data Lake
           # Substitua pelo nome real que você definiu na variável do Terraform ou passe via secret
-          aws s3 sync src/glue_jobs/ s3://p2c-olist-lakehouse-dev-storage/scripts/ --delete
+          aws s3 sync src/ s3://p2c-olist-lakehouse-dev-storage/scripts/ --delete
