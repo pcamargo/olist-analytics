@@ -5,15 +5,15 @@
 resource "aws_s3_object" "script_bronze_to_silver" {
   bucket = aws_s3_bucket.data_lake.id
   key    = "scripts/bronze_to_silver.py"
-  source = "../src/glue_jobs/bronze_to_silver.py"
-  etag   = filemd5("../src/glue_jobs/bronze_to_silver.py") # Força o update do job na AWS caso o código mude localmente
+  source = "../src/bronze_to_silver.py"
+  etag   = filemd5("../src/bronze_to_silver.py") # Força o update do job na AWS caso o código mude localmente
 }
 
 resource "aws_s3_object" "script_silver_to_gold" {
   bucket = aws_s3_bucket.data_lake.id
   key    = "scripts/silver_to_gold.py"
-  source = "../src/glue_jobs/silver_to_gold.py"
-  etag   = filemd5("../src/glue_jobs/silver_to_gold.py")
+  source = "../src/silver_to_gold.py"
+  etag   = filemd5("../src/silver_to_gold.py")
 }
 
 # ==============================================================================

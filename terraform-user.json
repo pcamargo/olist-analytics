@@ -1,0 +1,54 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "GithubActionsS3Deployment",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:ListBucket",
+                "s3:DeleteObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::p2c-olist-lakehouse-dev-storage ",
+                "arn:aws:s3:::p2c-olist-lakehouse-dev-storage /scripts/*"
+            ]
+        },
+        {
+            "Sid": "GithubActionsTerraformManagement",
+            "Effect": "Allow",
+            "Action": [
+                "s3:CreateBucket",
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutEncryptionConfiguration",
+                "glue:CreateDatabase",
+                "glue:DeleteDatabase",
+                "glue:GetDatabase",
+                "glue:CreateJob",
+                "glue:DeleteJob",
+                "glue:GetJob",
+                "glue:UpdateJob",
+                "glue:CreateCrawler",
+                "glue:DeleteCrawler",
+                "glue:GetCrawler",
+                "glue:UpdateCrawler",
+                "iam:CreateRole",
+                "iam:DeleteRole",
+                "iam:GetRole",
+                "iam:PutRolePolicy",
+                "iam:DeleteRolePolicy",
+                "iam:GetRolePolicy",
+                "iam:AttachRolePolicy",
+                "iam:DetachRolePolicy"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "GithubActionsStrictPassRole",
+            "Effect": "Allow",
+            "Action": "iam:PassRole",
+            "Resource": "arn:aws:iam::846251877823:role/olist-data-lakehouse-dev-glue-role"
+        }
+    ]
+}
