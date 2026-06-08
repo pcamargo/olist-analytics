@@ -25,15 +25,12 @@ jobs:
 
       - name: Terraform Format Check (Verifica formatação padrão)
         run: terraform -chdir=terraform fmt -check
-        description: "Verifica se o código Terraform segue as regras padrão de formatação"
 
       - name: Terraform Init (Inicializa provedores locais)
         run: terraform -chdir=terraform init -backend=false
-        description: "Inicializa os provedores locais para validação sem precisar conectar ao state"
 
       - name: Terraform Validate (Valida sintaxe e referências AWS)
         run: terraform -chdir=terraform validate
-        description: "Valida se a sintaxe e as referências dos recursos na AWS estão corretas"
 
   # JOB 2: Deploy dos Scripts PySpark para o S3 (CD)
   continuous-deployment:
