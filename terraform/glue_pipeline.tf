@@ -25,10 +25,10 @@ resource "aws_glue_job" "bronze_to_silver" {
   role_arn          = aws_iam_role.glue_service_role.arn
   glue_version      = "4.0" # Versão moderna suportando Spark 3.3 e Python 3
   worker_type       = "G.1X"
-  number_of_workers = 2     # Configuração econômica para dev/portfólio
+  number_of_workers = 2 # Configuração econômica para dev/portfólio
 
-  timeout           = 10
-  execution_class   = "FLEX"
+  timeout         = 10
+  execution_class = "FLEX"
 
   command {
     name            = "glueetl"
@@ -41,7 +41,7 @@ resource "aws_glue_job" "bronze_to_silver" {
     "--enable-continuous-cloudwatch-log" = "true"
     "--job-language"                     = "python"
     # Passa o nome do bucket dinamicamente para o script PySpark
-    "--DATA_LAKE_BUCKET"                 = aws_s3_bucket.data_lake.bucket
+    "--DATA_LAKE_BUCKET" = aws_s3_bucket.data_lake.bucket
   }
 }
 
@@ -52,8 +52,8 @@ resource "aws_glue_job" "silver_to_gold" {
   worker_type       = "G.1X"
   number_of_workers = 2
 
-  timeout           = 10
-  execution_class   = "FLEX"
+  timeout         = 10
+  execution_class = "FLEX"
 
   command {
     name            = "glueetl"
