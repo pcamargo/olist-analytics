@@ -23,15 +23,15 @@ jobs:
         with:
           terraform_version: "1.5.0"
 
-      - name: Terraform Format Check
+      - name: Terraform Format Check (Verifica formatação padrão)
         run: terraform -chdir=terraform fmt -check
         description: "Verifica se o código Terraform segue as regras padrão de formatação"
 
-      - name: Terraform Init
+      - name: Terraform Init (Inicializa provedores locais)
         run: terraform -chdir=terraform init -backend=false
         description: "Inicializa os provedores locais para validação sem precisar conectar ao state"
 
-      - name: Terraform Validate
+      - name: Terraform Validate (Valida sintaxe e referências AWS)
         run: terraform -chdir=terraform validate
         description: "Valida se a sintaxe e as referências dos recursos na AWS estão corretas"
 
