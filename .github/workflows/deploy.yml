@@ -18,6 +18,7 @@ jobs:
       - name: Checkout Código
         uses: actions/checkout@v4
 
+      # --- ETAPA 1: VALIDAR TERRAFORM ---
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -31,6 +32,21 @@ jobs:
 
       - name: Terraform Validate (Valida sintaxe e referências AWS)
         run: terraform -chdir=terraform validate
+
+      # --- ETAPA 2: EXECUTAR TESTES DO PYSPARK ---
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Instalar Dependências de Teste
+        run: |
+          pip install pytest pyspark==3.3.0
+
+      - name: Executar Testes Unitários (PyTest + PySpark Local)
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          pytest tests/
 
   # JOB 2: Deploy dos Scripts PySpark para o S3 (CD)
   continuous-deployment:
