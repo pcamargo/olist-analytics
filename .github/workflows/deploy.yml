@@ -8,6 +8,11 @@ on:
     branches:
       - main
 
+# OBRIGATÓRIO PARA OIDC: Permite que o GitHub gere o token de identidade seguro
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   # JOB 1: Validação de Qualidade do Código (CI)
   continuous-integration:
@@ -68,12 +73,14 @@ jobs:
       - name: Checkout Código
         uses: actions/checkout@v4
 
-      - name: Configurar Credenciais AWS
+      # CONFIGURAÇÃO AUTENTICADA VIA OIDC (SEM CHAVES ESTÁTICAS!)
+      - name: Configurar Credenciais AWS via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # Substitua pelo ARN gerado pelo Terraform (ou use um GitHub Secret para ocultá-lo)
+          role-to-assume: "arn:aws:iam::846251877823:role/p2c-olist-lakehouse-dev-github-actions-oidc-role"
           aws-region: "us-east-1"
+          audience: "sts.amazonaws.com"
 
       - name: Sincronizar Scripts com o S3
         run: |
