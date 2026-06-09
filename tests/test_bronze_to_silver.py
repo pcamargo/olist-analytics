@@ -53,4 +53,4 @@ def test_transform_orders_converts_timestamps_correctly(spark_fixture):
     # Verifica se a coluna de auditoria 'ingestion_at' foi criada
     assert "ingestion_at" in df_output.columns
     # Verifica se o valor nulo foi preservado corretamente
-    assert result[1]["order_approved_at"] is None
+    assert result[1]["order_estimated_delivery_date"] is None
