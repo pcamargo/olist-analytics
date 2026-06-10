@@ -1,5 +1,6 @@
 .venv/
 .idea/
+**/__pycache__/
 
 # Ignora a pasta oculta de dependências dentro do diretório terraform
 terraform/.terraform/

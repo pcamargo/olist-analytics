@@ -91,3 +91,46 @@ resource "aws_glue_crawler" "gold_crawler" {
     }
   })
 }
+
+# Tabela Gold no Glue Catalog para o KPI de Receita
+resource "aws_glue_catalog_table" "gold_kpi_receita" {
+  name          = "kpi_monthly_revenue"
+  database_name = aws_glue_catalog_database.olist_db.name
+  table_type    = "EXTERNAL_TABLE"
+
+  parameters = {
+    "classification" = "parquet"
+  }
+
+  storage_descriptor {
+    location      = "s3://${aws_s3_bucket.data_lake.id}/gold/kpi_monthly_revenue/"
+    input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
+    output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
+
+    ser_de_info {
+      name                  = "parquet"
+      serialization_library = "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
+    }
+
+    columns {
+      name = "year_month"
+      type = "string"
+    }
+    columns {
+      name = "total_revenue"
+      type = "double"
+    }
+    columns {
+      name = "total_freight"
+      type = "double"
+    }
+    columns {
+      name = "total_orders"
+      type = "bigint"
+    }
+    columns {
+      name = "calculated_at"
+      type = "timestamp"
+    }
+  }
+}

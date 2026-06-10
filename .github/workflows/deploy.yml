@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout Código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       # --- ETAPA 1: VALIDAR TERRAFORM ---
       - name: Setup Terraform
@@ -75,9 +75,8 @@ jobs:
 
       # CONFIGURAÇÃO AUTENTICADA VIA OIDC (SEM CHAVES ESTÁTICAS!)
       - name: Configurar Credenciais AWS via OIDC
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
-          # Substitua pelo ARN gerado pelo Terraform (ou use um GitHub Secret para ocultá-lo)
           role-to-assume: "arn:aws:iam::846251877823:role/p2c-olist-lakehouse-dev-github-actions-oidc-role"
           aws-region: "us-east-1"
           audience: "sts.amazonaws.com"
@@ -85,5 +84,4 @@ jobs:
       - name: Sincronizar Scripts com o S3
         run: |
           # Sincroniza apenas a pasta dos scripts com o diretório correto do Data Lake
-          # Substitua pelo nome real que você definiu na variável do Terraform ou passe via secret
           aws s3 sync src/ s3://p2c-olist-lakehouse-dev-storage/scripts/ --delete
