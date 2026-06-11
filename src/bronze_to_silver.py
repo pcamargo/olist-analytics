@@ -71,5 +71,22 @@ if __name__ == '__main__':
         .mode("overwrite") \
         .save(f"s3://{bucket_name}/silver/order_items/")
 
+    #####
+    # ==============================================================================
+    # 3. PROCESSAMENTO DA TABELA: PRODUTOS
+    # ==============================================================================
+    print("Iniciando o processamento da tabela Products...")
+
+    # Leitura dos dados brutos
+    products_df = spark.read.format("csv") \
+        .option("header", "true") \
+        .option("inferSchema", "true") \
+        .load(f"s3://{bucket_name}/bronze/olist_products_dataset.csv.csv")
+
+    # Escrita na camada Silver em formato Parquet
+    products_df.write.format("parquet") \
+        .mode("overwrite") \
+        .save(f"s3://{bucket_name}/silver/products/")
+
     print("Job Bronze to Silver concluído com sucesso!")
     job.commit()
