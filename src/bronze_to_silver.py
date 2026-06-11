@@ -81,7 +81,7 @@ if __name__ == '__main__':
     products_df = spark.read.format("csv") \
         .option("header", "true") \
         .option("inferSchema", "true") \
-        .load(f"s3://{bucket_name}/bronze/olist_products_dataset.csv.csv")
+        .load(f"s3://{bucket_name}/bronze/olist_products_dataset.csv")
 
     # Escrita na camada Silver em formato Parquet
     products_df.write.format("parquet") \
