@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
     # 2. TRANSFORMAÇÃO E AGREGAÇÃO (Regra de Negócio do KPI)
     # Filtrar pedidos válidos e extrair Ano-Mês
-    valid_orders = transform_orders(order_items_df)
+    valid_orders = transform_orders(orders_df)
 
     kpi_receita_mensal(valid_orders, order_items_df)
     kpi_monthly_sales_performance(valid_orders, order_items_df)

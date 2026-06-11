@@ -16,6 +16,13 @@ resource "aws_s3_object" "script_silver_to_gold" {
   etag   = filemd5("../src/silver_to_gold.py")
 }
 
+resource "aws_s3_object" "script_silver_to_kpi" {
+  bucket = aws_s3_bucket.data_lake.id
+  key    = "scripts/silver_to_gold_kpi_receita.py"
+  source = "../src/silver_to_gold_kpi_receita.py"
+  etag   = filemd5("../src/silver_to_gold_kpi_receita.py")
+}
+
 # ==============================================================================
 # 2. DEFINIÇÃO DOS AWS GLUE JOBS (PROCESSAMENTO SERVERLESS)
 # ==============================================================================
@@ -58,6 +65,30 @@ resource "aws_glue_job" "silver_to_gold" {
   command {
     name            = "glueetl"
     script_location = "s3://${aws_s3_bucket.data_lake.bucket}/${aws_s3_object.script_silver_to_gold.key}"
+    python_version  = "3"
+  }
+
+  default_arguments = {
+    "--continuous-log-logGroup"          = "/aws-glue/jobs"
+    "--enable-continuous-cloudwatch-log" = "true"
+    "--job-language"                     = "python"
+    "--DATA_LAKE_BUCKET"                 = aws_s3_bucket.data_lake.bucket
+  }
+}
+
+resource "aws_glue_job" "silver_to_gold_kpi" {
+  name              = "${var.project_name}-${var.environment}-silver_to_gold_kpi_receita"
+  role_arn          = aws_iam_role.glue_service_role.arn
+  glue_version      = "4.0"
+  worker_type       = "G.1X"
+  number_of_workers = 2
+
+  timeout         = 10
+  execution_class = "FLEX"
+
+  command {
+    name            = "glueetl"
+    script_location = "s3://${aws_s3_bucket.data_lake.bucket}/${aws_s3_object.script_silver_to_kpi.key}"
     python_version  = "3"
   }
 
@@ -127,6 +158,144 @@ resource "aws_glue_catalog_table" "gold_kpi_receita" {
     columns {
       name = "total_orders"
       type = "bigint"
+    }
+    columns {
+      name = "calculated_at"
+      type = "timestamp"
+    }
+  }
+}
+
+# Tabela Gold no Glue Catalog para o KPI de Receita
+resource "aws_glue_catalog_table" "kpi_monthly_sales_performance" {
+  name          = "kpi_monthly_sales_performance"
+  database_name = aws_glue_catalog_database.olist_db.name
+  table_type    = "EXTERNAL_TABLE"
+
+  parameters = {
+    "classification" = "parquet"
+  }
+
+  storage_descriptor {
+    location      = "s3://${aws_s3_bucket.data_lake.id}/gold/kpi_monthly_sales_performance/"
+    input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
+    output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
+
+    ser_de_info {
+      name                  = "parquet"
+      serialization_library = "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
+    }
+
+    columns {
+      name = "year_month"
+      type = "string"
+    }
+    columns {
+      name = "total_revenue"
+      type = "double"
+    }
+    columns {
+      name = "total_orders"
+      type = "bigint"
+    }
+    columns {
+      name = "total_items_sold"
+      type = "bigint"
+    }
+    columns {
+      name = "average_ticket"
+      type = "double"
+    }
+  }
+}
+
+# Tabela Gold no Glue Catalog para o KPI de Receita
+resource "aws_glue_catalog_table" "kpi_top_sellers" {
+  name          = "kpi_top_sellers"
+  database_name = aws_glue_catalog_database.olist_db.name
+  table_type    = "EXTERNAL_TABLE"
+
+  parameters = {
+    "classification" = "parquet"
+  }
+
+  storage_descriptor {
+    location      = "s3://${aws_s3_bucket.data_lake.id}/gold/kpi_top_sellers/"
+    input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
+    output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
+
+    ser_de_info {
+      name                  = "parquet"
+      serialization_library = "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
+    }
+
+    columns {
+      name = "year_month"
+      type = "string"
+    }
+    columns {
+      name = "seller_id"
+      type = "string"
+    }
+    columns {
+      name = "seller_revenue"
+      type = "double"
+    }
+    columns {
+      name = "orders_fulfilled"
+      type = "bigint"
+    }
+    columns {
+      name = "rank_position"
+      type = "int"
+    }
+  }
+}
+
+
+# Tabela Gold no Glue Catalog para o KPI de Receita
+resource "aws_glue_catalog_table" "kpi_top_products" {
+  name          = "kpi_top_products"
+  database_name = aws_glue_catalog_database.olist_db.name
+  table_type    = "EXTERNAL_TABLE"
+
+  parameters = {
+    "classification" = "parquet"
+  }
+
+  storage_descriptor {
+    location      = "s3://${aws_s3_bucket.data_lake.id}/gold/kpi_top_products/"
+    input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
+    output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
+
+    ser_de_info {
+      name                  = "parquet"
+      serialization_library = "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
+    }
+
+    columns {
+      name = "year_month"
+      type = "string"
+    }
+    columns {
+      name = "product_id"
+      type = "string"
+    }
+    columns {
+      name = "product_category_name"
+      type = "string"
+    }
+    columns {
+      name = "units_sold"
+      type = "bigint"
+    }
+    columns {
+      name = "product_revenue"
+      type = "double"
+    }
+    columns {
+      name = "product_rank"
+      type = "int"
     }
     columns {
       name = "calculated_at"
